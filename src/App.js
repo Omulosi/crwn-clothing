@@ -24,6 +24,7 @@ class App extends React.Component {
 
   componentDidMount() {
     const { setCurrentUser, collectionsArray } = this.props;
+
     this.unsubscribeFromAuth = auth.onAuthStateChanged(async (userAuth) => {
       if (userAuth) {
         // firebase
@@ -37,7 +38,10 @@ class App extends React.Component {
       }
 
       setCurrentUser({ currentUser: userAuth });
-      addCollectionAndDocuments("collections", collectionsArray);
+      addCollectionAndDocuments(
+        "collections",
+        collectionsArray.map(({ title, items }) => ({ title, items }))
+      );
     });
   }
 
@@ -53,7 +57,17 @@ class App extends React.Component {
           <Route exact path="/" component={HomePage} />
           <Route path="/shop" component={ShopPage} />
           <Route exact path="/checkout" component={CheckoutPage} />
-          <Route exact path="/signin" render={() => <SignInAndSignUpPage />} />
+          <Route
+            exact
+            path="/signin"
+            render={() =>
+              this.props.currentUser ? (
+                <Redirect to="/" />
+              ) : (
+                <SignInAndSignUpPage />
+              )
+            }
+          />
         </Switch>
       </div>
     );
@@ -62,11 +76,11 @@ class App extends React.Component {
 
 const mapStateToProps = createStructuredSelector({
   currentUser: selectCurrentUser,
+  collectionsArray: selectCollectionsForPreview,
 });
 
 const mapDispatchToProps = (dispatch) => ({
   setCurrentUser: (user) => dispatch(setCurrentUser(user)),
-  collectionsArray: selectCollectionsForPreview,
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);
