@@ -12,6 +12,8 @@ const config = {
   measurementId: "G-40Z2JXFMMD",
 };
 
+firebase.initializeApp(config);
+
 export const createuserProfileDocument = async (userAuth, additionalData) => {
   if (!userAuth) return;
 
@@ -39,7 +41,15 @@ export const createuserProfileDocument = async (userAuth, additionalData) => {
   return userRef;
 };
 
-firebase.initializeApp(config);
+export const addCollectionAndDocuments = (collectionKey, objectsToAdd) => {
+  const collectionRef = firestore.collection(collectionKey);
+
+  // const batch = firestore.batch();
+  // objectsToAdd.forEach((obj) => {
+  //   const newDocRef = collectionRef.doc();
+  //   const newDocSnashot = newDocRef.get();
+  // });
+};
 
 export const auth = firebase.auth();
 export const firestore = firebase.firestore();
